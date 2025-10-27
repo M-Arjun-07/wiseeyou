@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFi Gesture Recognition</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 WiFi Gesture Recognition</h1>
+            <p>Real-time gesture detection using CSI data</p>
+        </header>
+
+        <div class="status-panel">
+            <div class="gesture-display">
+                <div id="gestureCircle" class="gesture-circle">
+                    <span id="gestureText" class="gesture-text">No Gesture</span>
+                    <div class="confidence-container">
+                        <div id="confidenceBar" class="confidence-bar"></div>
+                        <span id="confidenceValue" class="confidence-value">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="startBtn" class="btn btn-start">Start Detection</button>
+                <button id="stopBtn" class="btn btn-stop">Stop Detection</button>
+                <div class="status-indicator">
+                    <span id="statusText">Status: Stopped</span>
+                    <div id="statusLight" class="status-light"></div>
+                </div>
+            </div>
+
+            <div class="gesture-info">
+                <h3>Supported Gestures:</h3>
+                <div class="gesture-list">
+                    <div class="gesture-item">
+                        <span class="gesture-name">Circle Clockwise</span>
+                        <span class="gesture-desc">↻ Circular hand motion</span>
+                    </div>
+                    <div class="gesture-item">
+                        <span class="gesture-name">Wave Right</span>
+                        <span class="gesture-desc">👋 Right hand wave</span>
+                    </div>
+                    <div class="gesture-item">
+                        <span class="gesture-name">Up and Down</span>
+                        <span class="gesture-desc">↕ Vertical hand motion</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-panel">
+            <div class="stat-card">
+                <h4>Confidence</h4>
+                <div id="confidenceDisplay" class="stat-value">0%</div>
+            </div>
+            <div class="stat-card">
+                <h4>Detection Count</h4>
+                <div id="detectionCount" class="stat-value">0</div>
+            </div>
+            <div class="stat-card">
+                <h4>Current Gesture</h4>
+                <div id="currentGesture" class="stat-value">None</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let startTime = 0;
+
+        function updateGesture(data) {
+            const gestureElement = document.getElementById('gestureText');
+            const confidenceValue = document.getElementById('confidenceValue');
+            const confidenceBar = document.getElementById('confidenceBar');
+            const confidenceDisplay = document.getElementById('confidenceDisplay');
+            const detectionCount = document.getElementById('detectionCount');
+            const currentGesture = document.getElementById('currentGesture');
+            
+            // Update gesture text
+            gestureElement.textContent = data.gesture;
+            currentGesture.textContent = data.gesture;
+            
+            // Update confidence
+            const confidencePercent = Math.round(data.confidence * 100);
+            confidenceValue.textContent = confidencePercent + '%';
+            confidenceDisplay.textContent = confidencePercent + '%';
+            confidenceBar.style.width = confidencePercent + '%';
+            
+            // Update detection count
+            detectionCount.textContent = data.detection_count;
+            
+            // Change colors based on confidence
+            if (data.confidence > 0.8) {
+                confidenceBar.style.background = '#4CAF50';
+                gestureElement.style.color = '#4CAF50';
+            } else if (data.confidence > 0.6) {
+                confidenceBar.style.background = '#FF9800';
+                gestureElement.style.color = '#FF9800';
+            } else {
+                confidenceBar.style.background = '#f44336';
+                gestureElement.style.color = '#f44336';
+            }
+        }
+
+        function updateStatus(isRunning) {
+            const statusText = document.getElementById('statusText');
+            const statusLight = document.getElementById('statusLight');
+            
+            if (isRunning) {
+                statusText.textContent = 'Status: Running';
+                statusLight.style.background = '#4CAF50';
+                startTime = Date.now();
+            } else {
+                statusText.textContent = 'Status: Stopped';
+                statusLight.style.background = '#f44336';
+            }
+        }
+
+        // Button event listeners
+        document.getElementById('startBtn').addEventListener('click', function() {
+            fetch('/api/start_detection')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'started') {
+                        updateStatus(true);
+                    }
+                });
+        });
+
+        document.getElementById('stopBtn').addEventListener('click', function() {
+            fetch('/api/stop_detection')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'stopped') {
+                        updateStatus(false);
+                    }
+                });
+        });
+
+        // Poll for gesture updates
+        function pollGesture() {
+            fetch('/api/gesture')
+                .then(response => response.json())
+                .then(data => {
+                    updateGesture(data);
+                    setTimeout(pollGesture, 200);
+                })
+                .catch(() => setTimeout(pollGesture, 1000));
+        }
+
+        // Start polling
+        pollGesture();
+        updateStatus(false);
+    </script>
+</body>
+</html>
