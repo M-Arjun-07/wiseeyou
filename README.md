@@ -38,16 +38,59 @@ WiSeeYou uses a **Random Forest classifier** trained on a large open-source Chin
 ## Repository Structure
 
 ```
-/training/
-  |- 1_process_dataset.py    # Cleans/preprocesses raw CSI data
-  |- 2_train_model.py        # Trains the Random Forest model
-/realtime/
-  |- 3_realtime_detection.py # Runs real-time gesture detection on live or recorded CSI
-/web_interface/
-  |- app.py                  # Web dashboard with live prediction and GUI
-/parsed/                     # Preprocessed CSV files for ML
-README.md
-LICENSE (MIT)
+/
+│   LICENSE
+│   README.md
+│
+├───.vscode
+│       settings.json
+│
+├───dataset
+│   ├───frontandafter
+│   │       frontandafter.csv
+│   │       frontandafter1.csv
+│   │       frontandafter2.csv
+│   │       frontandafter3.csv
+│   │       frontandafter4.csv
+│   │       frontandafter5.csv
+│   │       frontandafter6.csv
+│   │       frontandafter7.csv
+│   │
+│   ├───leftandright
+│   │       leftandright.csv
+│   │       leftandright1.csv
+│   │       leftandright2.csv
+│   │       leftandright3.csv
+│   │       leftandright4.csv
+│   │       leftandright5.csv
+│   │       leftandright6.csv
+│   │       leftandright7.csv
+│   │
+│   └───upanddown
+│           upanddown.csv
+│           upanddown1.csv
+│           upanddown2.csv
+│           upanddown3.csv
+│           upanddown4.csv
+│           upanddown5.csv
+│           upanddown6.csv
+│           upanddown7.csv
+│
+├───realtime
+│       3_realtime_detection.py
+│
+├───training
+│       1_process_dataset.py
+│       2_train_model.py
+│
+└───web_interface
+    │   app.py
+    │
+    ├───static
+    │       style.css
+    │
+    └───templates
+            index.html
 ```
 
 ---
