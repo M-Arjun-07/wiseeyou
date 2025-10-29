@@ -46,9 +46,6 @@ WiSeeYou uses a **Random Forest classifier** trained on a large open-source Chin
 /web_interface/
   |- app.py                  # Web dashboard with live prediction and GUI
 /parsed/                     # Preprocessed CSV files for ML
-/graphs/                     # Heatmaps & visualizations of CSI data
-csi_log_xxx.csv              # Raw logged CSI files
-log_csi.py                   # Script for logging CSI from ESP32 via serial
 README.md
 LICENSE (MIT)
 ```
@@ -125,10 +122,7 @@ Clone the repo, follow the usage steps, and unleash WiFi-powered gesture sensing
 git clone https://github.com/yourusername/wiseeyou.git
 cd wiseeyou
 ```
-```
 
-This README introduces the project, explains its theory, details hardware/code/ML pipeline, and provides step-by-step instructions plus references and licensing.
-```
 
 [1](https://ieeexplore.ieee.org/ielaam/7755/9346168/8908808-aam.pdf)
 [2](https://pmc.ncbi.nlm.nih.gov/articles/PMC6165566/)
