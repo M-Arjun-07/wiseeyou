@@ -155,5 +155,56 @@
         pollGesture();
         updateStatus(false);
     </script>
+    <script>
+    // ... existing code ...
+
+        function updateGesture(data) {
+            const gestureElement = document.getElementById('gestureText');
+            const confidenceValue = document.getElementById('confidenceValue');
+            const confidenceBar = document.getElementById('confidenceBar');
+            const confidenceDisplay = document.getElementById('confidenceDisplay');
+            const detectionCount = document.getElementById('detectionCount');
+            const currentGesture = document.getElementById('currentGesture');
+            
+            // Update gesture text - show "Not Recognized" for low confidence
+            if (data.confidence <= 0.6) {
+                gestureElement.textContent = "Not Recognized";
+                currentGesture.textContent = "Not Recognized";
+                gestureElement.style.color = '#ff6b6b'; // Red color for not recognized
+            } else {
+                gestureElement.textContent = data.gesture;
+                currentGesture.textContent = data.gesture;
+                
+                // Change color based on confidence level
+                if (data.confidence > 0.8) {
+                    gestureElement.style.color = '#4CAF50'; // Green for high confidence
+                } else if (data.confidence > 0.6) {
+                    gestureElement.style.color = '#FF9800'; // Orange for medium confidence
+                }
+            }
+            
+            // Update confidence display
+            const confidencePercent = Math.round(data.confidence * 100);
+            confidenceValue.textContent = confidencePercent + '%';
+            confidenceDisplay.textContent = confidencePercent + '%';
+            confidenceBar.style.width = confidencePercent + '%';
+            
+            // Update confidence bar color
+            if (data.confidence > 0.8) {
+                confidenceBar.style.background = '#4CAF50';
+            } else if (data.confidence > 0.6) {
+                confidenceBar.style.background = '#FF9800';
+            } else {
+                confidenceBar.style.background = '#ff6b6b'; // Red for low confidence
+            }
+            
+            // Update detection count (only count confident detections)
+            if (data.confidence > 0.6 && data.gesture !== "Not Recognized") {
+                detectionCount.textContent = data.detection_count;
+            }
+        }
+
+    // ... rest of the existing JavaScript code ...
+</script>
 </body>
 </html>

@@ -184,9 +184,10 @@ class DatasetProcessor:
     def process_all_gestures(self, dataset_path):
         """Process all gestures in the dataset"""
         gestures = {
-            'circleclockwise': 'circleclockwise',
-            'waveright': 'waveright', 
-            'upanddown': 'upanddown'
+            'frontandafter': 'frontandafter',
+            'upanddown': 'upanddown',
+            'leftandright': 'leftandright' 
+            
         }
         
         all_features = []

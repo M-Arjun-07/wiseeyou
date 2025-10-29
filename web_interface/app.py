@@ -56,6 +56,7 @@ class WebGestureDetector:
         return np.array(amplitudes)
     
     def apply_filter(self, data):
+        """KEEP FILTERING to match trained model"""
         try:
             return signal.sosfiltfilt(self.sos_filter, data)
         except:
@@ -70,6 +71,8 @@ class WebGestureDetector:
             return None
         
         features = []
+        
+        # KEEP FILTERING to match trained model
         csi_filtered = self.apply_filter(csi_amplitude)
         
         features.extend([
@@ -105,6 +108,7 @@ class WebGestureDetector:
             detection_count = 0
             
             print("🌐 Web detection started...")
+            print("📊 Confidence threshold: 60%")
             
             while is_detecting:
                 if serial_connection.in_waiting > 0:
@@ -120,13 +124,19 @@ class WebGestureDetector:
                                 prediction = self.model.predict([features])[0]
                                 current_confidence = np.max(self.model.predict_proba([features]))
                                 
-                                # Update global variables
-                                current_gesture = prediction
-                                confidence = current_confidence
-                                
-                                if current_confidence > 0.7 and prediction != "No Gesture":
+                                # CONFIDENCE THRESHOLD: Only show gesture if confidence > 60%
+                                if current_confidence > 0.6:
+                                    current_gesture = prediction
+                                    confidence = current_confidence
+                                    
+                                    # Count as detection only if confidence > 60%
                                     detection_count += 1
-                                    print(f"🌐 Detection: {prediction} (confidence: {current_confidence:.3f})")
+                                    print(f"🌐 Detection: {prediction} (confidence: {current_confidence:.1%})")
+                                else:
+                                    # If confidence <= 60%, show "Not Recognized"
+                                    current_gesture = "Not Recognized"
+                                    confidence = current_confidence
+                                    print(f"❌ Low confidence: {current_confidence:.1%} - Gesture not recognized")
                                 
                 time.sleep(0.01)
                 
@@ -169,5 +179,6 @@ def stop_detection():
 
 if __name__ == '__main__':
     print("🌐 Starting Web Interface...")
+    print("📊 Confidence threshold: 60%")
     print("📱 Open http://localhost:5000 in your browser")
     app.run(debug=True, host='0.0.0.0', port=5000)

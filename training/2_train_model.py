@@ -79,7 +79,7 @@ def train_model():
     print(f"\n💾 Model saved to: {model_path}")
     
     # Also save to training/models for backup
-    backup_path = 'models/gesture_model.pkl'
+    backup_path = 'training/models/gesture_model.pkl'
     joblib.dump(model, backup_path)
     print(f"💾 Backup saved to: {backup_path}")
     
